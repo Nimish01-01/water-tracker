@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daily Water Tracker 💧</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 24px;
+            padding: 40px;
+            max-width: 500px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            color: #667eea;
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #666;
+            font-size: 0.95em;
+        }
+
+        .stats {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 16px;
+            padding: 25px;
+            color: white;
+            margin-bottom: 30px;
+        }
+
+        .stat-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .stat-row:last-child {
+            margin-bottom: 0;
+        }
+
+        .stat-label {
+            font-size: 0.9em;
+            opacity: 0.9;
+        }
+
+        .stat-value {
+            font-size: 1.5em;
+            font-weight: bold;
+        }
+
+        .progress-container {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            height: 30px;
+            margin: 20px 0;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .progress-bar {
+            background: linear-gradient(90deg, #4ade80 0%, #22c55e 100%);
+            height: 100%;
+            border-radius: 12px;
+            transition: width 0.5s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 0.85em;
+        }
+
+        .progress-text {
+            position: absolute;
+            width: 100%;
+            text-align: center;
+            line-height: 30px;
+            font-weight: bold;
+            font-size: 0.85em;
+            z-index: 1;
+        }
+
+        .actions {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 15px;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: #f3f4f6;
+            color: #374151;
+        }
+
+        .goal-setting {
+            background: #f9fafb;
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .goal-setting h3 {
+            color: #374151;
+            margin-bottom: 15px;
+            font-size: 1em;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .input-group input {
+            flex: 1;
+            padding: 10px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 1em;
+        }
+
+        .input-group button {
+            padding: 10px 20px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .message {
+            text-align: center;
+            padding: 15px;
+            border-radius: 12px;
+            margin-top: 20px;
+            font-weight: bold;
+        }
+
+        .message.success {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .message.info {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .date-display {
+            text-align: center;
+            color: #6b7280;
+            font-size: 0.9em;
+            margin-top: 20px;
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 25px;
+            }
+
+            .header h1 {
+                font-size: 1.5em;
+            }
+
+            .actions {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>💧 Daily Water Tracker</h1>
+            <p>Stay hydrated, stay healthy!</p>
+        </div>
+
+        <div class="stats">
+            <div class="stat-row">
+                <span class="stat-label">Glasses Today</span>
+                <span class="stat-value" id="glassCount">0</span>
+            </div>
+            <div class="stat-row">
+                <span class="stat-label">Total Intake</span>
+                <span class="stat-value" id="totalIntake">0 ml</span>
+            </div>
+            <div class="stat-row">
+                <span class="stat-label">Daily Goal</span>
+                <span class="stat-value" id="dailyGoal">2500 ml</span>
+            </div>
+            
+            <div class="progress-container">
+                <div class="progress-text" id="progressText">0%</div>
+                <div class="progress-bar" id="progressBar"></div>
+            </div>
+        </div>
+
+        <div class="actions">
+            <button class="btn btn-primary" onclick="addGlass()">🥛 Add Glass</button>
+            <button class="btn btn-secondary" onclick="newDay()">🌞 New Day</button>
+        </div>
+
+        <div id="message"></div>
+
+        <div class="goal-setting">
+            <h3>⚙️ Set Daily Goal</h3>
+            <div class="input-group">
+                <input type="number" id="goalInput" placeholder="Enter goal (ml)" min="500" step="100">
+                <button onclick="setGoal()">Update</button>
+            </div>
+        </div>
+
+        <div class="date-display" id="dateDisplay"></div>
+    </div>
+
+    <script>
+        const GLASS_SIZE = 200; // ml per glass
+        let data = {
+            glasses: 0,
+            goal: 2500,
+            date: new Date().toDateString()
+        };
+
+        function loadData() {
+            try {
+                const saved = localStorage.getItem('waterTracker');
+                if (saved) {
+                    data = JSON.parse(saved);
+                    
+                    // Check if it's a new day
+                    const today = new Date().toDateString();
+                    if (data.date !== today) {
+                        data.glasses = 0;
+                        data.date = today;
+                        saveData();
+                    }
+                }
+            } catch (e) {
+                console.error('Error loading data:', e);
+            }
+            updateDisplay();
+        }
+
+        function saveData() {
+            try {
+                localStorage.setItem('waterTracker', JSON.stringify(data));
+                console.log('Data saved:', data);
+            } catch (e) {
+                console.error('Error saving data:', e);
+            }
+        }
+
+        function addGlass() {
+            data.glasses++;
+            console.log('Glass added. Total:', data.glasses);
+            saveData();
+            updateDisplay();
+            showMessage('Great! Keep it up! 💪', 'success');
+        }
+
+        function newDay() {
+            console.log('New Day button clicked');
+            data.glasses = 0;
+            data.date = new Date().toDateString();
+            console.log('Reset data:', data);
+            saveData();
+            updateDisplay();
+            showMessage('New day started! Time to hydrate! 🌞', 'info');
+        }
+
+        function setGoal() {
+            const input = document.getElementById('goalInput');
+            const newGoal = parseInt(input.value);
+            
+            if (newGoal && newGoal >= 500) {
+                data.goal = newGoal;
+                saveData();
+                updateDisplay();
+                input.value = '';
+                showMessage('Goal updated successfully! 🎯', 'success');
+            } else {
+                alert('Please enter a valid goal (minimum 500ml)');
+            }
+        }
+
+        function updateDisplay() {
+            const totalIntake = data.glasses * GLASS_SIZE;
+            const percentage = Math.min((totalIntake / data.goal) * 100, 100);
+
+            document.getElementById('glassCount').textContent = data.glasses;
+            document.getElementById('totalIntake').textContent = totalIntake + ' ml';
+            document.getElementById('dailyGoal').textContent = data.goal + ' ml';
+            document.getElementById('progressBar').style.width = percentage + '%';
+            document.getElementById('progressText').textContent = Math.round(percentage) + '%';
+            document.getElementById('dateDisplay').textContent = 'Last updated: ' + data.date;
+            
+            console.log('Display updated:', { glasses: data.glasses, totalIntake, percentage });
+        }
+
+        function showMessage(text, type) {
+            const messageEl = document.getElementById('message');
+            messageEl.textContent = text;
+            messageEl.className = 'message ' + type;
+            
+            setTimeout(() => {
+                messageEl.textContent = '';
+                messageEl.className = 'message';
+            }, 3000);
+        }
+
+        // Initialize
+        window.addEventListener('DOMContentLoaded', function() {
+            console.log('App initialized');
+            loadData();
+        });
+    </script>
+</body>
+</html> 
